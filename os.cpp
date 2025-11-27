@@ -469,84 +469,92 @@
 // #include <iostream>
 // #include <vector>
 // using namespace std;
+// int n, m;
+// vector<vector<int>> alloc;
+// vector<vector<int>> max_res;
+// vector<vector<int>> need;
+// vector<int> avail;
+// vector<int> safeSequence;
+// vector<bool> visited;
+// int totalSequences = 0;
+// void findSafeSequences(vector<int>& currentAvail) {
+//     if (safeSequence.size() == n) {
+//         totalSequences++;
+//         cout << "Safe Sequence " << totalSequences << ": ";
+//         for (int i = 0; i < n; i++) {
+//             cout << "P" << safeSequence[i] + 1;
+//             if (i != n - 1) cout << " -> ";
+//         }
+//         cout << endl;
+//         return;
+//     }
+//     for (int i = 0; i < n; i++) {
+//         if (!visited[i]) {
+//             bool canExecute = true;
+//             for (int j = 0; j < m; j++) {
+//                 if (need[i][j] > currentAvail[j]) {
+//                     canExecute = false;
+//                     break;
+//                 }
+//             }
+//             if (canExecute) {
+//                 visited[i] = true;
+//                 safeSequence.push_back(i);
+//                 for (int j = 0; j < m; j++) {
+//                     currentAvail[j] += alloc[i][j];
+//                 }
+//                 findSafeSequences(currentAvail);
+//                 for (int j = 0; j < m; j++) {
+//                     currentAvail[j] -= alloc[i][j];
+//                 }
+//                 visited[i] = false;
+//                 safeSequence.pop_back();
+//             }
+//         }
+//     }
+// }
 // int main() {
-//     int n, m;
 //     cout << "Enter number of processes: ";
 //     cin >> n;
 //     cout << "Enter number of resource types: ";
 //     cin >> m;
-//     vector<vector<int>> alloc(n, vector<int>(m));
-//     vector<vector<int>> max(n, vector<int>(m));
-//     vector<vector<int>> need(n, vector<int>(m));
-//     vector<int> avail(m);
+//     alloc.resize(n, vector<int>(m));
+//     max_res.resize(n, vector<int>(m));
+//     need.resize(n, vector<int>(m));
+//     avail.resize(m);
+//     visited.resize(n, false);
 //     cout << "Enter Allocation Matrix:\n";
-//     for(int i = 0; i < n; i++) {
-//         for(int j = 0; j < m; j++) {
-//             cin >> alloc[i][j];
-//         }
+//     for (int i = 0; i < n; i++) {
+//         for (int j = 0; j < m; j++) cin >> alloc[i][j];
 //     }
 //     cout << "Enter Max Matrix:\n";
-//     for(int i = 0; i < n; i++) {
-//         for(int j = 0; j < m; j++) {
-//             cin >> max[i][j];
-//         }
+//     for (int i = 0; i < n; i++) {
+//         for (int j = 0; j < m; j++) cin >> max_res[i][j];
 //     }
 //     cout << "Enter Available Resources:\n";
-//     for(int j = 0; j < m; j++) {
-//         cin >> avail[j];
-//     }
-//     for(int i = 0; i < n; i++) {
-//         for(int j = 0; j < m; j++) {
-//             need[i][j] = max[i][j] - alloc[i][j];
+//     for (int j = 0; j < m; j++) cin >> avail[j];
+//     for (int i = 0; i < n; i++) {
+//         for (int j = 0; j < m; j++) {
+//             need[i][j] = max_res[i][j] - alloc[i][j];
 //         }
 //     }
-//     vector<int> f(n, 0);
-//     vector<int> ans;
-//     int ind = 0;
-//     for (int k = 0; k < n; k++) {
-//         for (int i = 0; i < n; i++) {
-//             if (f[i] == 0) {
-//                 int flag = 0;
-//                 for (int j = 0; j < m; j++) {
-//                     if (need[i][j] > avail[j]){
-//                         flag = 1; 
-//                         break;
-//                     }
-//                 }
-//                 if (flag == 0) {
-//                     ans.push_back(i);
-//                     for (int y = 0; y < m; y++)
-//                         avail[y] += alloc[i][y];
-//                     f[i] = 1;
-//                 }
-//             }
-//         }
-//     }
-//     int flag = 1;
-//     for(int i = 0; i < n; i++) {
-//         if(f[i] == 0) {
-//             flag = 0;
-//             cout << "\nThe system is NOT Safe (Deadlock Possible)";
-//             break;
-//         }
-//     }
-//     if(flag == 1) {
-//         cout << "\nFollowing is the Safe Sequence: \n";
-//         for (int i = 0; i < n - 1; i++)
-//             cout << "P" << ans[i] + 1 << " -> ";
-//         cout << "P" << ans[n - 1] + 1 << endl;
+//     cout << "\n--- All Possible Safe Sequences ---\n";
+//     vector<int> currentAvail = avail;
+//     findSafeSequences(currentAvail);
+//     if (totalSequences == 0) {
+//         cout << "No safe sequence found (Deadlock)." << endl;
 //     }
 //     return 0;
 // }
 
-// // Process,Allocation (A B C),Max (A B C)
-// // 5 3
-// // P1, 0 1 0, 7 5 3
-// // P2, 2 0 0, 3 2 2
-// // P3, 3 0 2, 9 0 2
-// // P4, 2 1 1, 2 2 2
-// // P5, 0 0 2, 4 3 3
-// // 3 3 2
+// // // Process,Allocation (A B C),Max (A B C)
+// // // 5 3
+// // // P1, 0 1 0, 7 5 3
+// // // P2, 2 0 0, 3 2 2
+// // // P3, 3 0 2, 9 0 2
+// // // P4, 2 1 1, 2 2 2
+// // // P5, 0 0 2, 4 3 3
+// // // 3 3 2
 
 
 
