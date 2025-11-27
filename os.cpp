@@ -368,10 +368,12 @@
 //     cin >> tq;
 //     int time = 0;      
 //     int completed = 0; 
+//     vector<int>gant;
 //     while(completed < n) {
 //         bool ran_process = false; 
 //         for(int i = 0; i < n; i++) {
 //             if(p[i].at <= time && p[i].rem_bt > 0) {
+//               gant.push_back(p[i].id);
 //                 ran_process = true;
 //                 if(p[i].rem_bt > tq) {
 //                     time += tq;
@@ -391,6 +393,10 @@
 //         }
 //     }
 //     printOutput(p, n);
+//     cout<<"\nGant Chart: ";
+//     for(int &p:gant){
+//        cout<<"P"<<p<<" ";
+//      }
 //     return 0;
 // }
 
