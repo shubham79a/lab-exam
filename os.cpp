@@ -327,24 +327,56 @@
 
 // // // Round Robin (RR) Scheduling Algorithm Implementation
 // #include <iostream>
+// #include <queue>
+// #include <vector>
+// #include <algorithm>
 // using namespace std;
-
 // struct Process {
 //     int id;
 //     int at;
 //     int bt;
-//     int rem_bt; 
+//     int rem_bt;
 //     int tat;
-//     int wt; 
+//     int wt;
+//     int completion_time;
 // };
+// struct GanttSegment {
+//     int process_id;
+//     int start_time;
+//     int end_time;
+// };
+// void printGanttChart(vector<GanttSegment> &gantt) {
+//     cout << "\n\n========== GANTT CHART ==========\n";
+//     cout << " ";
+//     for(size_t i = 0; i < gantt.size(); i++) {
+//         cout << "--------";
+//     }
+//     cout << "\n|";
+//     for(size_t i = 0; i < gantt.size(); i++) {
+//         cout << "  P" << gantt[i].process_id << "   |";
+//     }
+//     cout << "\n ";
+//     for(size_t i = 0; i < gantt.size(); i++) {
+//         cout << "--------";
+//     }
+//     cout << "\n";
+//     cout << gantt[0].start_time;
+//     for(size_t i = 0; i < gantt.size(); i++) {
+//         int time = gantt[i].end_time;
+//         if(time < 10) cout << "       " << time;
+//         else cout << "      " << time;
+//     }
+//     cout << "\n=================================\n";
+// }
 // void printOutput(Process p[], int n) {
-//     cout << "\nID\tAT\tBT\tTAT\tWT\n";
-//     cout << "----------------------------------------\n";
+//     cout << "\nID\tAT\tBT\tCT\tTAT\tWT\n";
+//     cout << "--------------------------------------------------\n";
 //     float totalTAT = 0, totalWT = 0;
 //     for(int i = 0; i < n; i++) {
 //         cout << p[i].id << "\t" 
 //              << p[i].at << "\t" 
 //              << p[i].bt << "\t" 
+//              << p[i].completion_time << "\t"
 //              << p[i].tat << "\t" 
 //              << p[i].wt << endl;
 //         totalTAT += p[i].tat;
@@ -358,38 +390,66 @@
 //     cout << "Enter number of processes: ";
 //     cin >> n;
 //     Process p[10];
+//     bool visited[10] = {false};
 //     for(int i = 0; i < n; i++) {
 //         p[i].id = i + 1;
 //         cout << "Enter Arrival and Burst Time for P" << i+1 << ": ";
 //         cin >> p[i].at >> p[i].bt;
-//         p[i].rem_bt = p[i].bt; 
+//         p[i].rem_bt = p[i].bt;
 //     }
+//     sort(p, p + n, [](Process a, Process b) {
+//         return a.at < b.at;
+//     });
 //     cout << "Enter Time Quantum: ";
 //     cin >> tq;
-//     int time = 0;      
-//     int completed = 0; 
-//     while(completed < n) {
-//         bool ran_process = false; 
-//         for(int i = 0; i < n; i++) {
-//             if(p[i].at <= time && p[i].rem_bt > 0) {
-//                 ran_process = true;
-//                 if(p[i].rem_bt > tq) {
-//                     time += tq;
-//                     p[i].rem_bt -= tq;
-//                 } 
-//                 else {
-//                     time += p[i].rem_bt;
-//                     p[i].rem_bt = 0;
-//                     completed++;
-//                     p[i].tat = time - p[i].at;   
-//                     p[i].wt = p[i].tat - p[i].bt;  
-//                 }
-//             }
-//         }
-//         if(ran_process == false) {
-//             time++;
+//     queue<int> q;
+//     vector<GanttSegment> gantt;
+//     int current_time = 0;
+//     int completed = 0;
+//     for(int i=0; i<n; i++){
+//         if(p[i].at <= current_time && !visited[i]){
+//             q.push(i);
+//             visited[i] = true;
 //         }
 //     }
+//     while(completed < n) {
+//         if(q.empty()) {
+//             current_time++;
+//             for(int i=0; i<n; i++){
+//                 if(p[i].at <= current_time && !visited[i]){
+//                     q.push(i);
+//                     visited[i] = true;
+//                 }
+//             }
+//             continue;
+//         }
+//         int idx = q.front();
+//         q.pop();
+//         int exec_time;
+//         if(p[idx].rem_bt > tq) {
+//             exec_time = tq;
+//         } else {
+//             exec_time = p[idx].rem_bt;
+//         }
+//         gantt.push_back({p[idx].id, current_time, current_time + exec_time});
+//         p[idx].rem_bt -= exec_time;
+//         current_time += exec_time;
+//         for(int i = 0; i < n; i++) {
+//             if(p[i].at <= current_time && p[i].rem_bt > 0 && !visited[i]) {
+//                 q.push(i);
+//                 visited[i] = true;
+//             }
+//         }
+//         if(p[idx].rem_bt > 0) {
+//             q.push(idx);
+//         } else {
+//             completed++;
+//             p[idx].completion_time = current_time;
+//             p[idx].tat = p[idx].completion_time - p[idx].at;
+//             p[idx].wt = p[idx].tat - p[idx].bt;
+//         }
+//     }
+//     printGanttChart(gantt);
 //     printOutput(p, n);
 //     return 0;
 // }
