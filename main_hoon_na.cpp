@@ -1,6 +1,5 @@
-#include <bits/stdc++.h>
-using namespace std;
+include <bits/stdc++.h>
+using namespace std
 
-int main(){
-    cout<<"Main Hoon Na"<<endl;
-}
+int main()
+    cout<<"Main Hoon Na"<<endl
